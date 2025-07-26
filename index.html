@@ -25,7 +25,9 @@
   <h2>Password Generator</h2>
   <label for="seedInput">Enter text:</label><br>
   <input type="text" id="seedInput" placeholder="Enter seed text..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
-  <button onclick="generatePassword()">Generate Password</button>
+  <br><br>
+  <label for="lengthInput">Password length:</label><br>
+  <input type="number" id="lengthInput" value="20" min="1" max="64"/>
 
   <div id="output"></div>
   <button id="copyButton" onclick="copyToClipboard()" style="display:none;">Copy to Clipboard</button>
@@ -35,13 +37,17 @@
   <script>
     let lastPassword = "";
 
+    document.getElementById("seedInput").addEventListener("input", generatePassword);
+    document.getElementById("lengthInput").addEventListener("input", generatePassword);
+
     async function generatePassword() {
       const characters = "BpAKD!ya2&PzcjbZQHLurVYFxO9iUgSX45NJ6Ge#so3@Inkmtfv*$^qM%Rdwhl8T7W1CE0";
-      const length = 20;
       const teks = document.getElementById("seedInput").value;
+      const lengthInput = document.getElementById("lengthInput").value;
+      const length = parseInt(lengthInput, 10);
 
-      if (!teks.trim()) {
-        document.getElementById("output").innerText = "Please enter a seed text.";
+      if (!teks || isNaN(length) || length < 1) {
+        document.getElementById("output").innerText = "Please enter valid input.";
         document.getElementById("copyButton").style.display = "none";
         return;
       }
