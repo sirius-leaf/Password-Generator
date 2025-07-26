@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>Hashing Text</title>
+    </head>
+
+    <body>
+        <form id="inputForm">
+            Text <input><br>
+            Length <input type="number" value="20">
+        </form>
+
+        <br><button onclick="hash()">Convert</button>
+
+        <p>Result :</p>
+
+        <h2 id="output">-</h2>
+        
+        <script>
+            function hash() {
+                let input = document.getElementById("inputForm");
+                let text = input.elements[0].value;
+                let unicodeDigitTotal = 0;
+                let unicodeDigitString = "";
+                
+                for (let charIdx = 0; charIdx < text.length; charIdx++) {
+                    let charUnicode = text.charCodeAt(charIdx);
+                    unicodeDigitTotal += charUnicode;
+                    unicodeDigitString += charUnicode.toString();
+                }
+
+                let unicodeDigitSum = 0;
+
+                for (let charIdx = 0; charIdx < unicodeDigitString.length; charIdx++) {
+                    unicodeDigitSum += Number(unicodeDigitString[charIdx]);
+                }
+
+                let unicodeDigitMultiplied = unicodeDigitTotal * unicodeDigitSum;
+                let loopDigitTotal = 0;
+                let loopStep = 0;
+                let loopMaxValue = 0;
+
+                while (unicodeDigitMultiplied > 1) {
+                    if (unicodeDigitMultiplied % 2 == 0) {
+                        if (unicodeDigitMultiplied % 8 == 0) {
+                            unicodeDigitMultiplied /= 8;
+                        } else if (unicodeDigitMultiplied % 6 == 0) {
+                            unicodeDigitMultiplied /= 6;
+                        } else if (unicodeDigitMultiplied % 4 == 0) {
+                            unicodeDigitMultiplied /= 4;
+                        } else {
+                            unicodeDigitMultiplied /= 2;
+                        }
+                    } else {
+                        unicodeDigitMultiplied = unicodeDigitMultiplied * 3 + 1;
+                    }
+
+                    loopDigitTotal += unicodeDigitMultiplied;
+                    loopStep++;
+
+                    if (unicodeDigitMultiplied > loopMaxValue) {
+                        loopMaxValue = unicodeDigitMultiplied;
+                    } 
+                }
+
+                let loopDigitMultiplied = loopDigitTotal * loopMaxValue * loopStep;
+                let hashText = "";
+                let charPool = [
+                    [
+                        'a', 'b', 'c', 'd', 'e',
+                        'f', 'g', 'h', 'i', 'j',
+                        'k', 'l', 'm', 'n', 'o',
+                        'p', 'q', 'r', 's', 't',
+                        'u', 'v', 'w', 'x', 'y',
+                        'z'
+                    ],
+                    [
+                        'A', 'B', 'C', 'D', 'E',
+                        'F', 'G', 'H', 'I', 'J',
+                        'K', 'L', 'M', 'N', 'O',
+                        'P', 'Q', 'R', 'S', 'T',
+                        'U', 'V', 'W', 'X', 'Y',
+                        'Z'
+                    ],
+                    [
+                        '-', '_', '.'
+                    ],
+                    [
+                        '0', '1', '2', '3', '4',
+                        '5', '6', '7', '8', '9'
+                    ]
+                ];
+
+                let lowercaseCharIdx = 0;
+                let uppercaseCharIdx = 0;
+                let symbolCharIdx = 0;
+                let numberCharIdx = 0;
+
+                while (loopDigitMultiplied > 1) {
+                    if (loopDigitMultiplied % 2 == 0) {
+                        if (loopDigitMultiplied % 4 == 0) {
+                            loopDigitMultiplied /= 4;
+                            lowercaseCharIdx += loopDigitMultiplied % 26 + 1;
+                            if (lowercaseCharIdx >= 26) lowercaseCharIdx -= 26;
+                            hashText += charPool[0][lowercaseCharIdx];
+                        } else {
+                            loopDigitMultiplied /= 2;
+                            uppercaseCharIdx += loopDigitMultiplied % 26 + 1;
+                            if (uppercaseCharIdx >= 26) uppercaseCharIdx -= 26;
+                            hashText += charPool[1][uppercaseCharIdx];
+                        }
+                    } else {
+                        if (loopDigitMultiplied % 5 == 0) {
+                            loopDigitMultiplied = loopDigitMultiplied * 3 + 1;
+                            symbolCharIdx += loopDigitMultiplied % 3 + 1;
+                            if (symbolCharIdx >= 3) symbolCharIdx -= 3;
+                            hashText += charPool[2][symbolCharIdx];
+                        } else {
+                            loopDigitMultiplied = loopDigitMultiplied * 3 + 1;
+                            numberCharIdx += loopDigitMultiplied % 10 + 1;
+                            if (numberCharIdx >= 10) numberCharIdx -= 10;
+                            hashText += charPool[3][numberCharIdx];
+                        }
+                    }
+                }
+
+                let length = Number(input.elements[1].value);
+                let hashText2 = "";
+
+                if (length < hashText.length) {
+                    for (let charIdx = 0; charIdx < length; charIdx++) {
+                        hashText2 += hashText[charIdx];
+                    }
+                } else {
+                    hashText2 = "Length value is too long!";
+                }
+
+                document.getElementById("output").innerHTML = hashText2;
+            }
+        </script>
+    </body>
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Password Generator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 30px;
+    }
+    input, button {
+      padding: 10px;
+      font-size: 16px;
+      margin-top: 10px;
+    }
+    #output {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+    #copyButton {
+      margin-left: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Password Generator</h2>
+  <label for="seedInput">Enter text:</label><br>
+  <input type="text" id="seedInput" placeholder="Enter seed text..." />
+  <button onclick="generatePassword()">Generate Password</button>
+
+  <div id="output"></div>
+  <button id="copyButton" onclick="copyToClipboard()" style="display:none;">Copy to Clipboard</button>
+  <br><br>
+  <a href="old/">old generator</a>
+
+  <script>
+    let lastPassword = "";
+
+    async function generatePassword() {
+      const characters = "BpAKD!ya2&PzcjbZQHLurVYFxO9iUgSX45NJ6Ge#so3@Inkmtfv*$^qM%Rdwhl8T7W1CE0";
+      const length = 20;
+      const teks = document.getElementById("seedInput").value;
+
+      if (!teks.trim()) {
+        document.getElementById("output").innerText = "Please enter a seed text.";
+        document.getElementById("copyButton").style.display = "none";
+        return;
+      }
+
+      const encoder = new TextEncoder();
+      const data = encoder.encode(teks);
+      const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      const hashInt = hashArray.map(b => b.toString().padStart(3, '0')).join('');
+
+      let password = "";
+      let step = 0;
+
+      for (let i = 0; i < length; i++) {
+        const i2 = (i * 2) % hashInt.length;
+        const slice = hashInt.slice(i2, i2 + 2);
+        const value = parseInt(slice, 10) || 0;
+        step = (step + value) % characters.length;
+        password += characters[step];
+      }
+
+      lastPassword = password;
+      document.getElementById("output").innerText = "Generated Password: " + password;
+      document.getElementById("copyButton").style.display = "inline-block";
+    }
+
+    function copyToClipboard() {
+      navigator.clipboard.writeText(lastPassword).then(() => {
+        alert("Password copied to clipboard!");
+      }).catch(err => {
+        alert("Failed to copy: " + err);
+      });
+    }
+  </script>
+</body>
+</html>
