@@ -3,18 +3,33 @@
     <head>
         <meta charset="utf-8" />
         <title>Hashing Text</title>
+
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 30px;
+            }
+            input, button {
+                padding: 10px;
+                font-size: 16px;
+                margin-top: 10px;
+            }
+        </style>
     </head>
 
     <body>
+        <a href="../">back</a>
+        <br><br>
         <form id="inputForm">
-            Text <input><br>
-            Length <input type="number" value="20">
+            Text<br>
+            <input><br><br>
+            Length<br>
+            <input type="number" value="20" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" >
         </form>
-
-        <br><button onclick="hash()">Convert</button>
-
+        <br>
+        <button onclick="hash()">Convert</button>
+        <br><br>
         <p>Result :</p>
-
         <h2 id="output">-</h2>
         
         <script>
